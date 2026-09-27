@@ -175,28 +175,52 @@ public double CalculateCurrentFailureIntensity(
         -(lambda0 * tau) / nu0);
 }
 
-public double CalculateExpectedCumulativeFailures(
-    double lambda0,
-    double nu0,
-    double tau)
+    public double CalculateExpectedCumulativeFailures(
+        double lambda0,
+        double nu0,
+        double tau)
+    {
+        if (lambda0 <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(lambda0));
+        }
+
+        if (nu0 <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(nu0));
+        }
+
+        if (tau < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(tau));
+        }
+
+        return nu0 * (
+            1 - Math.Exp(-(lambda0 * tau) / nu0));
+    }
+public double GenMagicNum(
+    int choice,
+    string path,
+    IFileReader fileReader)
 {
-    if (lambda0 <= 0)
+    ArgumentNullException.ThrowIfNull(fileReader);
+
+    if (choice < 0)
     {
-        throw new ArgumentOutOfRangeException(nameof(lambda0));
+        throw new ArgumentOutOfRangeException(nameof(choice));
     }
 
-    if (nu0 <= 0)
+    string[] magicStrings = fileReader.Read(path);
+
+    if (choice >= magicStrings.Length)
     {
-        throw new ArgumentOutOfRangeException(nameof(nu0));
+        throw new ArgumentOutOfRangeException(nameof(choice));
     }
 
-    if (tau < 0)
-    {
-        throw new ArgumentOutOfRangeException(nameof(tau));
-    }
+    double magicNumber =
+        double.Parse(magicStrings[choice]);
 
-    return nu0 * (
-        1 - Math.Exp(-(lambda0 * tau) / nu0));
+    return 2 * Math.Abs(magicNumber);
 }
 
 }
